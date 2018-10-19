@@ -16,6 +16,7 @@ cache:
   - $HOME/.sbt
   - $HOME/.m2
   - $HOME/.ivy2
+  - $HOME/graalvm-ce-1.0.0-rc7
 
 env:
   global:
@@ -36,6 +37,18 @@ before_install:
 
 before_script:
 - curl -L --create-dirs -o $HOME/.sbt/launchers/1.2.6/sbt-launch.jar http://dl.bintray.com/sbt/maven-releases/org/scala-sbt/sbt-launch/1.2.6/sbt-launch.jar
+# Make GraalVM `native-image` available and nothing else
+- if [[ ! -d graalvm-ce-1.0.0-rc7 ]]; then
+    cd $HOME;
+    wget -O graalvm-ce-1.0.0-rc7-linux-amd64.tar.gz https://github.com/oracle/graal/releases/download/vm-1.0.0-rc7/graalvm-ce-1.0.0-rc7-linux-amd64.tar.gz;
+    tar zxf graalvm-ce-1.0.0-rc7-linux-amd64.tar.gz;
+    rm graalvm-ce-1.0.0-rc7-linux-amd64.tar.gz;
+  fi;
+  ls -lsa $HOME/graalvm-ce-1.0.0-rc7/bin/native-image;
+  mkdir -p $HOME/.bin;
+  ln -f -s $HOME/graalvm-ce-1.0.0-rc7/bin/native-image $HOME/.bin/native-image;
+  export PATH=$HOME/.bin:$PATH;
+  echo New path: ${PATH};
 
 # job definitions
 
@@ -49,6 +62,9 @@ jobs:
       script: sbt "^validateUniversal"
       if: type = pull_request OR (type = push AND branch = master)
       name: "scripted universal tests"
+    - script: sbt "^validateGraalVMNativeImage"
+      name: "scripted GraalVM native-image tests"
+      if: type = pull_request OR (type = push AND branch = master)
     - script: sbt "^validateJar"
       name: "scripted jar tests"
       if: type = pull_request OR (type = push AND branch = master)
