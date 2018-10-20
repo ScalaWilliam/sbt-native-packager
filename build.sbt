@@ -1,9 +1,7 @@
-sbtPlugin := true
-
 name := "sbt-native-packager"
 organization := "com.typesafe.sbt"
 
-Global / scalaVersion := "2.12.6"
+Global / scalaVersion := "2.12.7"
 
 // crossBuildingSettings
 crossSbtVersions := Vector("0.13.17", "1.1.6")
@@ -53,7 +51,7 @@ libraryDependencies ++= {
 }
 
 // configure github page
-enablePlugins(SphinxPlugin, SiteScaladocPlugin, GhpagesPlugin)
+enablePlugins(SphinxPlugin, SiteScaladocPlugin, GhpagesPlugin, SbtPlugin)
 
 git.remoteRepo := "git@github.com:sbt/sbt-native-packager.git"
 
@@ -96,6 +94,7 @@ addCommandAlias("validateUniversal", "scripted universal/*")
 addCommandAlias("validateJar", "scripted jar/*")
 addCommandAlias("validateBash", "scripted bash/*")
 addCommandAlias("validateAsh", "scripted ash/*")
+addCommandAlias("validateGraalVMNativeImage", "scripted graalvm-native-image/*")
 addCommandAlias("validateRpm", "scripted rpm/*")
 addCommandAlias("validateDebian", "scripted debian/*")
 addCommandAlias("validateDocker", "scripted docker/*")
